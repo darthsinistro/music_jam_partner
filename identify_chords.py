@@ -16,7 +16,7 @@ FRAME_DURATION = 1 # Number of seconds for a frame
 FRAME_SIZE = int(sr*FRAME_DURATION)
 print(f'Number of frames: {int(np.ceil(len(g_chords)/FRAME_SIZE))}')
 
-# Part 3: Visualize Frequency domain
+# Part 3: Visualize and extract Frequency domain
 
 def plot_magnitude_spectrum(signal, sr, title, plot_diag=True, frame_num = 1, f_ratio=1, list_thresh=100):
     sample = signal[(frame_num-1)*FRAME_SIZE:frame_num*FRAME_SIZE]
@@ -37,7 +37,8 @@ def plot_magnitude_spectrum(signal, sr, title, plot_diag=True, frame_num = 1, f_
     sorted_freq = sorted(unsort_freq, key=lambda item: item[1], reverse=True)
     return sorted_freq
 
-freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", 13, 0.025)  #Look at the 5th and 12th frames at 1 second definition
+freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", plot_diag=False,
+                                    frame_num=12, f_ratio=0.025)  #Look at the 5th and 12th frames at 1 second definition
 
 # Part 3a: Identify notes
 NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
@@ -66,5 +67,11 @@ def get_notes(freq_list):
     return found_notes
 
 get_notes(freq_list)
+
+
+for cur_frame in range(int(np.ceil(len(g_chords)/FRAME_SIZE))):
+    cur_freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", plot_diag=False,
+                                    frame_num=(cur_frame+1), f_ratio=0.025)
+    print(f'Notes in frame {cur_frame+1} are: {get_notes(cur_freq_list)}')
 
 # Part 4: Identify chord from notes
