@@ -18,22 +18,26 @@ print(f'Number of frames: {int(np.ceil(len(g_chords)/FRAME_SIZE))}')
 
 # Part 3: Visualize Frequency domain
 
-def plot_magnitude_spectrum(signal, sr, title, frame_num = 1, f_ratio=1):
+def plot_magnitude_spectrum(signal, sr, title, plot_diag=True, frame_num = 1, f_ratio=1, list_thresh=100):
     sample = signal[(frame_num-1)*FRAME_SIZE:frame_num*FRAME_SIZE]
-    X = np.fft.fft(sample)
+    X = np.fft.fft(sample)   # TODO: include hanning window here?
     X_mag = np.absolute(X)
-    
-    plt.figure(figsize=(18, 5))
     
     f = np.linspace(0, sr, len(X_mag))
     f_bins = int(len(X_mag)*f_ratio)  
-    
-    plt.plot(f[:f_bins], X_mag[:f_bins])
-    plt.xlabel('Frequency (Hz)')
-    plt.title(title)
-    plt.show()
+    if plot_diag:
+        plt.figure(figsize=(18, 5))
+        plt.plot(f[:f_bins], X_mag[:f_bins])
+        plt.xlabel('Frequency (Hz)')
+        plt.title(title)
+        plt.show()
 
-plot_magnitude_spectrum(g_chords, sr, "G Chords", 10, 0.025)
+    unsort_freq = list(zip(f[:f_bins], X_mag[:f_bins]))
+    unsort_freq = [(freq,amp) for freq, amp in unsort_freq if amp >= list_thresh]
+    sorted_freq = sorted(unsort_freq, key=lambda item: item[1], reverse=True)
+    return sorted_freq
+
+freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", 13, 0.025)  #Look at the 5th and 12th frames at 1 second definition
 
 # Part 3a: Identify notes
 NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
@@ -47,6 +51,20 @@ def number_to_freq(n):
 def note_name(n):
     return (NOTE_NAMES[n % 12])
 
+def get_notes(freq_list):
+    idx = 0
+    found_notes = []
+    while (idx<len(freq_list)):
+        f = freq_list[idx][0]
+        n = freq_to_number(f)
+        n0 = int(round(n))
+        name = note_name(n0)
 
+        if name not in found_notes:
+            found_notes.append(name)
+        idx += 1
+    return found_notes
+
+get_notes(freq_list)
 
 # Part 4: Identify chord from notes
