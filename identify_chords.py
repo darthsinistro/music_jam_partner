@@ -4,50 +4,23 @@ import os
 import matplotlib.pyplot as plt
 import librosa, librosa.display
 
-audio_file = 'G:/My Drive/Box Sync/Analytics/music_jam_partner/audio_samples/g_gmaj7.wav'
-
+#Load Audio file
+audio_file = 'audio_samples/g_gmaj7.wav'
 g_chords, sr = librosa.load(audio_file)
 
-# Part 2: Perform FT
+# Part 2: Setup FT
 import numpy as np
-FRAME_DURATION = 0.25 # Number of seconds for a frame
-FRAME_SIZE = int(2**np.floor(np.log2(sr*FRAME_DURATION)))
-HOP_SIZE = int(FRAME_SIZE/4)
 
-g_stft = librosa.stft(g_chords, n_fft=FRAME_SIZE, hop_length=HOP_SIZE)
+# Define the number of samples I'll be using in each frame
+FRAME_DURATION = 1 # Number of seconds for a frame
+FRAME_SIZE = int(sr*FRAME_DURATION)
+print(f'Number of frames: {int(np.ceil(len(g_chords)/FRAME_SIZE))}')
 
-# Part 3a: Visualize STFT spectrogram
-Y_scale = np.abs(g_stft) ** 2
+# Part 3: Visualize Frequency domain
 
-def plot_spectrogram(Y, sr, hop_length, y_axis="linear"):
-    plt.figure(figsize=(25, 10))
-    librosa.display.specshow(Y, 
-                             sr=sr, 
-                             hop_length=hop_length, 
-                             x_axis="time", 
-                             y_axis=y_axis)
-    plt.colorbar(format="%+2.f")
-    plt.show()
-
-Y_log_scale = librosa.power_to_db(Y_scale)
-plot_spectrogram(Y_log_scale, sr, HOP_SIZE, y_axis="log")
-plot_spectrogram(Y_log_scale, sr, HOP_SIZE, y_axis="linear")
-
-lst_freq = librosa.fft_frequencies(sr=sr, n_fft=FRAME_SIZE)
-
-def plot_magnitude_spectrum_time(Y, lst_freq, frame_idx=0, f_ratio=1):
-    plt.figure(figsize=(25, 10))
-    f_bins = int(f_ratio*len(lst_freq))
-    plt.plot(lst_freq[:f_bins],Y[:f_bins,frame_idx])
-    plt.xlabel('Frequency (Hz)')
-    plt.show()
-
-plot_magnitude_spectrum_time(Y_log_scale, lst_freq, 100, f_ratio=0.2)
-
-# Part 3a: Visualize Frequency domain
-
-def plot_magnitude_spectrum(signal, sr, title, f_ratio=1):
-    X = np.fft.fft(signal)
+def plot_magnitude_spectrum(signal, sr, title, frame_num = 1, f_ratio=1):
+    sample = signal[(frame_num-1)*FRAME_SIZE:frame_num*FRAME_SIZE]
+    X = np.fft.fft(sample)
     X_mag = np.absolute(X)
     
     plt.figure(figsize=(18, 5))
@@ -60,7 +33,7 @@ def plot_magnitude_spectrum(signal, sr, title, f_ratio=1):
     plt.title(title)
     plt.show()
 
-plot_magnitude_spectrum(g_chords[:int(g_chords.shape[0]/3)], sr, "G Chords", 0.025)
+plot_magnitude_spectrum(g_chords, sr, "G Chords", 10, 0.025)
 
 # Part 3a: Identify notes
 NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
