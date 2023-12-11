@@ -75,3 +75,37 @@ for cur_frame in range(int(np.ceil(len(g_chords)/FRAME_SIZE))):
     print(f'Notes in frame {cur_frame+1} are: {get_notes(cur_freq_list)}')
 
 # Part 4: Identify chord from notes
+import csv
+from collections import deque
+
+def read_csv_file(file_path):
+    data = []
+    with open(file_path, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
+
+#Let's read in the file with the chord formula and create a dictionary
+chord_path = 'chordFormula/chords.csv'
+chord_data = read_csv_file(chord_path)
+chord_dict = {chord_row[4]:chord_row[0] for chord_row in chord_data[1:]}
+
+
+# Now a function that inputs a set of notes and returns the possible chord names
+def chord_from_notes(notes_list):
+    chromatic_scale = deque(NOTE_NAMES)
+
+    possible_chords = []
+
+    for cur_note in notes_list:
+        chromatic_scale.rotate(-chromatic_scale.index(cur_note))
+        temp_formula = '-'.join(sorted([str(chromatic_scale.index(ind_note)) for ind_note in notes_list]))
+        if temp_formula in chord_dict.keys():
+            possible_chords.append(cur_note + " " + chord_dict[temp_formula])
+    
+    return possible_chords
+
+notes_list = ['D', 'G', 'B'] # Delete when done testing
+chord_from_notes(notes_list)

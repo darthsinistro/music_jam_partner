@@ -1,0 +1,32 @@
+Chord Type,Notes,Symbol,Formula,Python formula
+Minor,3,m,1-b3-5,0-3-7
+Major Flat Five,3,-,1-3-b5,0-4-6
+Major,3,"M, Maj",1-3-5,0-4-7
+Minor seventh,4,m7,1-b3-5-b7,0-10-3-7
+Minor sixth,4,m6,1-b3-5-6,0-3-7-9
+Minor/Major seventh,4,m/Maj7,1-b3-5-7,0-11-3-7
+Minor added ninth,4,madd9,1-b3-5-9,0-2-3-7
+Seventh,4,7,1-3-5-b7,0-10-4-7
+Seven sharp five,4,7#5,1-3-#5-b7,0-10-4-8
+Seven flat five,4,7b5,1-3-b5-b7,0-10-4-6
+Minor seven flat fifth,4,m7-5 or ø,1-b3-b5-b7,0-10-3-6
+Minor added fourth,4,madd4,1-b3-4-5,0-3-5-7
+Added Fourth,4,add4,1-3-4-5,0-4-5-7
+Major 7th,4,Maj7,1-3-5-7,0-11-4-7
+Sixth,4,6,1-3-5-6,0-4-7-9
+Seven sharp ninth,5,7#9,1-3-5-b7-#9,0-10-3-4-7
+Seven flat ninth,5,7b9,1-3-5-b7-b9,0-1-10-4-7
+Ninth,5,9,1-3-5-b7-9,0-10-2-4-7
+Nine sharp five,5,9#5,1-3-#5-b7-9,0-10-2-4-8
+Seven flat five sharp nine,5,7b5#9,1-3-b5-b7-#9,0-10-3-4-6
+Seven flat five flat nine,5,7b5b9,1-3-b5-b7-b9,0-1-10-4-6
+Seven sharp eleven,5,7#11,1-3-5-b7-#11,0-10-4-6-7
+Nine flat five,5,9b5,1-3-b5-b7-9,0-10-2-4-6
+Seven sharp five sharp nine,5,7#5#9,1-3-#5-b7-#9,0-10-3-4-8
+Seven sharp five flat nine,5,7#5b9,1-3-#5-b7-b9,0-1-10-4-8
+Major Ninth,5,Maj9,1-3-5-7-9,0-11-2-4-7
+Minor/Major ninth,5,m/Maj9,1-b3-5-7-9,0-11-2-3-7
+Minor ninth,5,m9,1-b3-5-b7-9,0-10-2-3-7
+Major seven sharp eleventh,5,Maj7#11,1-3-5-7-#11,0-11-4-6-7
+Minor six add nine,5,m6/9,1-b3-5-6-9,0-2-3-7-9
+Six Nine,5,9-Jun,1-3-5-6-9,0-2-4-7-9
