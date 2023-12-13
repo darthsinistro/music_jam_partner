@@ -1,59 +1,80 @@
 import pyaudio
+import struct
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+import time
+from tkinter import TclError
 
-# Set up the plot
-fig, ax = plt.subplots()
-x = np.arange(0, 1000, 1)
-line, = ax.plot(x, np.zeros_like(x))
+# constants
+CHUNK = 1024 * 2             # samples per frame
+FORMAT = pyaudio.paInt16     # audio format (bytes per sample?)
+CHANNELS = 1                 # single channel for microphone
+RATE = 44100                 # samples per second
 
-# Set up the microphone input stream
-chunk_size = 1000
-sample_format = pyaudio.paInt16
-channels = 1
-sample_rate = 44100
+# create matplotlib figure and axes
+fig, ax = plt.subplots(1, figsize=(15, 7))
 
+# pyaudio class instance
 p = pyaudio.PyAudio()
-stream = p.open(format=sample_format,
-                channels=channels,
-                rate=sample_rate,
-                frames_per_buffer=chunk_size,
-                input=True)
 
-# Variable to check if space key is pressed
-space_pressed = False
+# stream object to get data from microphone
+stream = p.open(
+    format=FORMAT,
+    channels=CHANNELS,
+    rate=RATE,
+    input=True,
+    output=True,
+    frames_per_buffer=CHUNK,
+    input_device_index=1
+)
 
-def on_key(event):
-    global space_pressed
-    if event.key == ' ':
-        space_pressed = True
+# variable for plotting
+x = np.arange(0, 2 * CHUNK, 2)
 
-# Attach the key press event handler
-fig.canvas.mpl_connect('key_press_event', on_key)
+# create a line object with random data
+line, = ax.plot(x, np.random.rand(CHUNK), '-', lw=2)
 
-def update_plot(frame):
-    global space_pressed
+# basic formatting for the axes
+ax.set_title('AUDIO WAVEFORM')
+ax.set_xlabel('samples')
+ax.set_ylabel('volume')
+ax.set_ylim(0, 255)
+ax.set_xlim(0, 2 * CHUNK)
+plt.setp(ax, xticks=[0, CHUNK, 2 * CHUNK], yticks=[0, 128, 255])
 
-    # Read microphone input
-    audio_data = np.frombuffer(stream.read(chunk_size), dtype=np.int16)
+# show the plot
+plt.show(block=False)
 
-    # Update the plot with the new waveform
-    line.set_ydata(audio_data)
+print('stream started')
 
-    # Check if space key is pressed to close the plot
-    if space_pressed:
-        plt.close(fig)
+# for measuring frame rate
+frame_count = 0
+start_time = time.time()
 
-    return line,
-
-# Set up the animation
-ani = FuncAnimation(fig, update_plot, blit=True)
-
-# Show the live waveform plot
-plt.show()
-
-# Stop the microphone stream when the plot is closed
-stream.stop_stream()
-stream.close()
-p.terminate()
+while True:
+    
+    # binary data
+    data = stream.read(CHUNK)  
+    
+    # convert data to integers, make np array, then offset it by 127
+    data_int = struct.unpack(str(2 * CHUNK) + 'B', data)
+    
+    # create np array and offset by 128
+    data_np = np.array(data_int, dtype='b')[::2] + 128
+    
+    line.set_ydata(data_np)
+    
+    # update figure canvas
+    try:
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+        frame_count += 1
+        
+    except TclError:
+        
+        # calculate average frame rate
+        frame_rate = frame_count / (time.time() - start_time)
+        
+        print('stream stopped')
+        print('average frame rate = {:.0f} FPS'.format(frame_rate))
+        break
