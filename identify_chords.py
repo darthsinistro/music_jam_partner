@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import librosa, librosa.display
 
 #Load Audio file
-audio_file = 'audio_samples/g_gmaj7.wav'
-g_chords, sr = librosa.load(audio_file)
+audio_file = 'audio_samples/mtw.wav'
+wav_audio, sr = librosa.load(audio_file)
 
 # Part 2: Setup FT
 import numpy as np
@@ -14,7 +14,7 @@ import numpy as np
 # Define the number of samples I'll be using in each frame
 FRAME_DURATION = 1 # Number of seconds for a frame
 FRAME_SIZE = int(sr*FRAME_DURATION)
-print(f'Number of frames: {int(np.ceil(len(g_chords)/FRAME_SIZE))}')
+print(f'Number of frames: {int(np.ceil(len(wav_audio)/FRAME_SIZE))}')
 
 # Part 3: Visualize and extract Frequency domain
 
@@ -37,7 +37,7 @@ def plot_magnitude_spectrum(signal, sr, title, plot_diag=True, frame_num = 1, f_
     sorted_freq = sorted(unsort_freq, key=lambda item: item[1], reverse=True)
     return sorted_freq
 
-freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", plot_diag=False,
+freq_list = plot_magnitude_spectrum(wav_audio, sr, "G Chords", plot_diag=False,
                                     frame_num=12, f_ratio=0.025)  #Look at the 5th and 12th frames at 1 second definition
 
 # Part 3a: Identify notes
@@ -69,8 +69,8 @@ def get_notes(freq_list):
 get_notes(freq_list)
 
 
-for cur_frame in range(int(np.ceil(len(g_chords)/FRAME_SIZE))):
-    cur_freq_list = plot_magnitude_spectrum(g_chords, sr, "G Chords", plot_diag=False,
+for cur_frame in range(int(np.ceil(len(wav_audio)/FRAME_SIZE))):
+    cur_freq_list = plot_magnitude_spectrum(wav_audio, sr, "G Chords", plot_diag=False,
                                     frame_num=(cur_frame+1), f_ratio=0.025)
     print(f'Notes in frame {cur_frame+1} are: {get_notes(cur_freq_list)}')
 
